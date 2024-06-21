@@ -12,9 +12,9 @@ local Action = {
         disableCombat = false,
     },
     animation = {
-        animDict = nil,
-        anim = nil,
-        flags = 0,
+        dict = nil,
+        clip = nil,
+        falg = 0,
         task = nil,
     },
     prop = {
@@ -26,8 +26,8 @@ local Action = {
     propTwo = {
         model = nil,
         bone = nil,
-        coords = vec3(0.0, 0.0, 0.0),
-        rotation = vec3(0.0, 0.0, 0.0),
+        pos = vec3(0.0, 0.0, 0.0),
+        rot = vec3(0.0, 0.0, 0.0),
     },
 }
 
@@ -73,8 +73,8 @@ local function createAndAttachProp(prop, ped)
     local boneIndex = GetPedBoneIndex(ped, prop.bone or 60309)
     AttachEntityToEntity(
         propEntity, ped, boneIndex,
-        prop.coords.x, prop.coords.y, prop.coords.z,
-        prop.rotation.x, prop.rotation.y, prop.rotation.z,
+        prop.pos.x, prop.pos.y, prop.pos.z,
+        prop.rot.x, prop.rot.y, prop.rot.z,
         true, true, false, true, 0, true
     )
     return netId
@@ -106,9 +106,9 @@ local function StartActions()
                 TaskStartScenarioInPlace(ped, Action.animation.task, 0, true)
             else
                 local anim = Action.animation
-                if anim.animDict and anim.anim and DoesEntityExist(ped) and not IsEntityDead(ped) then
-                    loadAnimDict(anim.animDict)
-                    TaskPlayAnim(ped, anim.animDict, anim.anim, 3.0, 3.0, -1, anim.flags or 1, 0, false, false, false)
+                if anim.dict and anim.clip and DoesEntityExist(ped) and not IsEntityDead(ped) then
+                    loadAnimDict(anim.dict)
+                    TaskPlayAnim(ped, anim.dict, anim.clip, 3.0, 3.0, -1, anim.flags or 1, 0, false, false, false)
                 end
             end
             isAnim = true
@@ -163,8 +163,8 @@ end
 local function ActionCleanup()
     local ped = PlayerPedId()
     if Action.animation then
-        if Action.animation.task or (Action.animation.animDict and Action.animation.anim) then
-            StopAnimTask(ped, Action.animation.animDict, Action.animation.anim, 1.0)
+        if Action.animation.task or (Action.animation.dict and Action.animation.anim) then
+            StopAnimTask(ped, Action.animation.dict, Action.animation.anim, 1.0)
             ClearPedSecondaryTask(ped)
         else
             ClearPedTasks(ped)
